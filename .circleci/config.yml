@@ -1,0 +1,50 @@
+version: 2.1
+
+executors:
+  mysql-executor:
+    docker:
+      - image: circleci/python:3.8
+      - image: circleci/mysql:5.7
+    working_directory: ~/repo
+
+jobs:
+  setup:
+    docker:
+      - image: circleci/mysql:5.7
+    steps:
+      - checkout
+      - run:
+          name: "Install MySQL Client"
+          command: |
+            apt-get update && apt-get install -y mysql-client
+      - run:
+          name: "Setup MySQL database"
+          command: |
+            echo "Creating database"
+            mysql -u root -e "CREATE DATABASE IF NOT EXISTS plantillafutbol;"
+            echo "Loading database schema"
+            mysql -u root plantillafutbol < ./path/to/your/dumpfile.sql
+            echo "Database setup completed"
+
+  test:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: "Install Dependencies"
+          command: |
+            pip install -r requirements.txt
+      - run:
+          name: "Run Tests"
+          command: |
+            pytest tests/
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - setup
+      - test:
+          requires:
+            - setup
