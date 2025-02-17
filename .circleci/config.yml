@@ -1,50 +1,31 @@
 version: 2.1
 
-executors:
-  mysql-executor:
-    docker:
-      - image: circleci/python:3.8
-      - image: circleci/mysql:5.7
-    working_directory: ~/repo
-
 jobs:
-  setup:
-    docker:
-      - image: circleci/mysql:5.7
-    steps:
-      - checkout
-      - run:
-          name: "Install MySQL Client"
-          command: |
-            apt-get update && apt-get install -y mysql-client
-      - run:
-          name: "Setup MySQL database"
-          command: |
-            echo "Creating database"
-            mysql -u root -e "CREATE DATABASE IF NOT EXISTS plantillafutbol;"
-            echo "Loading database schema"
-            mysql -u root plantillafutbol < ./path/to/your/dumpfile.sql
-            echo "Database setup completed"
-
   test:
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/node:16  # Utilizamos una imagen de Docker con Node.js preinstalado
+    working_directory: ~/repo  # Definimos el directorio de trabajo
     steps:
-      - checkout
+      - checkout  # Clonamos el repositorio
+      
       - run:
-          name: "Install Dependencies"
-          command: |
-            pip install -r requirements.txt
+          name: Instalar dependencias
+          command: npm install  # Instalamos las dependencias del proyecto
+
       - run:
-          name: "Run Tests"
-          command: |
-            pytest tests/
+          name: Instalar Jest globalmente
+          command: npm install -g jest  # Instalamos Jest globalmente para poder ejecutarlo desde la línea de comandos
+
+      - run:
+          name: Verificar instalación de Jest
+          command: npx jest --version  # Verificamos que Jest esté instalado correctamente
+
+      - run:
+          name: Ejecutar pruebas
+          command: npm test  # Ejecutamos las pruebas con Jest
 
 workflows:
   version: 2
-  test:
+  build_and_test:
     jobs:
-      - setup
-      - test:
-          requires:
-            - setup
+      - test  # Ejecutamos el job "test" en el flujo de trabajo
