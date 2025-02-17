@@ -1,5 +1,5 @@
 // Supongamos que las funciones están en un archivo llamado 'crud.js'
-const { cargarTabla, anadePersona, borrarPersona, editarPersona, limpiarForm } = require('./crud');
+const { cargarTabla, anadePersona, borrarPersona, editarPersona, limpiarForm } = require('../src/index');
 
 test('anadePersona agrega una nueva persona correctamente', async () => {
     // Simulamos el evento e y el contexto de la función
