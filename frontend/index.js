@@ -1,13 +1,23 @@
 var url='http://localhost/clase/CRUD-despliegue/backend/servidor.php';
 
-window.onload = function () {
+/*window.onload = function () {
     cargarTabla();
     document.getElementById("btNuevoJugador").onclick = mostrarForm;
     document.getElementById("btCancelar").onclick = cancelarForm;
     document.getElementById("btAnade").onclick = anadePersona;
 
     document.getElementById("btAnade").dataset.idjugador = -1;
-}
+}*/
+
+document.addEventListener('DOMContentLoaded', function () {
+    cargarTabla();
+    document.getElementById("btNuevoJugador").onclick = mostrarForm;
+    document.getElementById("btCancelar").onclick = cancelarForm;
+    document.getElementById("btAnade").onclick = anadePersona;
+
+    document.getElementById("btAnade").dataset.idjugador = -1;
+});
+
 
 function Crea_Fila(aCol) {
     var fila = document.createElement("tr");
