@@ -1,4 +1,4 @@
-var url='http://localhost/clase/CRUD-despliegue/servidor/servidor.php';
+var url='http://localhost/clase/CRUD-despliegue/backend/servidor.php';
 
 window.onload = function () {
     cargarTabla();
