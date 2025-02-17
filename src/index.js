@@ -1,5 +1,4 @@
-var peti = new pAJAX();
-let url = 'SERVIDOR/servidor.php';
+var url='http://localhost/clase/CRUD-despliegue/servidor/servidor.php';
 
 window.onload = function () {
     cargarTabla();
@@ -7,9 +6,7 @@ window.onload = function () {
     document.getElementById("btCancelar").onclick = cancelarForm;
     document.getElementById("btAnade").onclick = anadePersona;
 
-    // Establecer la fecha de nacimiento por defecto a la fecha actual
-    let fechaActual = new Date().toISOString().split('T')[0]; // Obtiene la fecha en formato YYYY-MM-DD
-    document.getElementById("fecha_nac").value = fechaActual;
+    document.getElementById("btAnade").dataset.idjugador = -1;
 }
 
 function Crea_Fila(aCol) {
@@ -58,8 +55,8 @@ function LlenaTabla(aTabla, cuerpoTabla) {
 function cargarTabla() {
     var p = {
         servicio: "listar"
-    }
-    peti.peticion(url, 'post', MuestraPersonas, JSON.stringify(p));
+    };
+    fetchData(url, p, MuestraPersonas);
 }
 
 function MuestraPersonas(datos) {
@@ -70,27 +67,17 @@ function MuestraPersonas(datos) {
 
 function anadePersona(e) {
     e.preventDefault();
-    if (this.dataset.idjugador == -1) 
-        var p = {
-            servicio: "insertar",
-            nombre: document.getElementById("nombre").value,
-            apellidos: document.getElementById("apellidos").value,
-            fecha_nac: document.getElementById("fecha_nac").value,
-            posicion: document.getElementById("posicion").value,
-            nacionalidad: document.getElementById("nacionalidad").value,
-        };
-    else 
-        var p = {
-            servicio: "modificar",
-            id: this.dataset.idjugador,
-            nombre: document.getElementById("nombre").value,
-            apellidos: document.getElementById("apellidos").value,
-            fecha_nac: document.getElementById("fecha_nac").value,
-            posicion: document.getElementById("posicion").value,
-            nacionalidad: document.getElementById("nacionalidad").value,
-        };
+    let p = {
+        servicio: this.dataset.idjugador == -1 ? "insertar" : "modificar",
+        id: this.dataset.idjugador == -1 ? undefined : this.dataset.idjugador,
+        nombre: document.getElementById("nombre").value,
+        apellidos: document.getElementById("apellidos").value,
+        fecha_nac: document.getElementById("fecha_nac").value,
+        posicion: document.getElementById("posicion").value,
+        nacionalidad: document.getElementById("nacionalidad").value,
+    };
     console.log(p);
-    peti.peticion(url, "post", MuestraPersonas, JSON.stringify(p));
+    fetchData(url, p, MuestraPersonas);
     this.dataset.idjugador = -1;
     cancelarForm();
 }
@@ -101,8 +88,8 @@ function borrarPersona(e) {
         var p = {
             servicio: "borrar",
             id: this.dataset.idjugador
-        }
-        peti.peticion(url, "post", MuestraPersonas, JSON.stringify(p));
+        };
+        fetchData(url, p, MuestraPersonas);
     }
 }
 
@@ -130,9 +117,9 @@ function editarPersona(e) {
     var p = {
         servicio: "selJugadorID",
         id: this.dataset.idjugador
-    }
+    };
 
-    peti.peticion(url, "post", llenaForm, JSON.stringify(p));
+    fetchData(url, p, llenaForm);
 }
 
 function llenaForm(datos) {
@@ -153,4 +140,17 @@ function limpiarForm() {
     document.getElementById("fecha_nac").value = "";
     document.getElementById("posicion").value = "";
     document.getElementById("nacionalidad").value = "";
+}
+
+function fetchData(url, data, callback) {
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(callback)
+    .catch(error => console.error('Error:', error));
 }

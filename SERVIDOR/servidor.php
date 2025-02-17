@@ -1,6 +1,6 @@
 <?php
 //include("conexion.php");
-$conn = Conectar2("platillafutbol", "root", "");
+$conn = Conectar2("plantillafutbol", "root", "");
 
 $datos = file_get_contents('php://input');
 $objeto=json_decode($datos);
