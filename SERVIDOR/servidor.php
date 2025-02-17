@@ -78,18 +78,20 @@ function modificarJugadores($objeto) {
 	global $conn;
 	try {
 		$sql = "UPDATE jugadores SET
-							NOMBRE		= ?, 
-							APELLIDOS	= ?,
+							nombre		= ?, 
+							apellidos	= ?,
                             fecha_nac   = ?,
                             posicion    = ?,
                             nacionalidad    =?
 						WHERE id = ?";
 		$conn->prepare($sql)->execute(
 		array(
-			$objeto->dni,
-			$objeto->nombre, 
-			$objeto->apellidos, 
-			$objeto->id
+			$objeto->nombre,
+				$objeto->apellidos,
+                $objeto->fecha_nac,
+                $objeto->posicion,
+                $objeto->nacionalidad,
+				$objeto->id
 			) 
 		);
 		return true;
