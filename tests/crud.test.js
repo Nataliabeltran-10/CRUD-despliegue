@@ -1,4 +1,4 @@
-const { insertar, modificar, borrar, listar } = require('./crud');  // Importa las funciones de tu API
+const { insertar, modificar, borrar, listar } = require('./index.');  
 
 // Base de datos de prueba (para realizar las pruebas)
 let personas = [
