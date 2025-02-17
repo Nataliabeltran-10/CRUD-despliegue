@@ -21,9 +21,6 @@
             border-radius: 15px;
             padding: 1em;
             color: red;
-
-            /*	opacity:0;   */
-            /*	transition: all 1s;   */
         }
 
         .formPersonas div label {
@@ -36,14 +33,13 @@
             margin-top: 1em;
         }
 
-
         .ver {
             visibility: visible;
             opacity: 1;
         }
     </style>
-        <script type="text/javascript" src="PAJAX/utilAJAX.js"></script>
-        <script type="text/javascript" src="src/index.js"></script>
+    <script type="text/javascript" src="PAJAX/utilAJAX.js"></script>
+    <script type="text/javascript" src="src/index.js"></script>
 </head>
 
 <body>
@@ -54,32 +50,30 @@
             <legend>Alta en el servicio</legend>
             <div>
                 <label for="nombre">Nombre</label>
-                <input type="text" id="nombre"/>
+                <input type="text" id="nombre" />
             </div>
             <div>
                 <label for="apellidos">Apellidos</label>
-                <input type="text" id="apellidos" size="40"/>
+                <input type="text" id="apellidos" size="40" />
             </div>
             <div>
-                <label for="apellidos">Fecha Nacimiento</label>
-                <input type="text" id="fecha_nac" size="40"/>
+                <label for="fecha_nac">Fecha Nacimiento</label>
+                <input type="date" id="fecha_nac" size="40" />
             </div>
             <div>
-                <label for="apellidos">Posicion</label>
-                <input type="text" id="posicion" size="40"/>
+                <label for="posicion">Posición</label>
+                <input type="text" id="posicion" size="40" />
             </div>
             <div>
-                <label for="apellidos">Nacionalidad</label>
-                <input type="text" id="nacionalidad" size="40"/>
+                <label for="nacionalidad">Nacionalidad</label>
+                <input type="text" id="nacionalidad" size="40" />
             </div>
             <div class="btn">
-                <button id="btAnade">Añadir </button>
-                <button id="btCancelar">Cancelar </button>
+                <button id="btAnade">Añadir</button>
+                <button id="btCancelar">Cancelar</button>
             </div>
         </fieldset>
     </div>
-
-
 
     <br />
     <button class="btn" id="btNuevoJugador">Nueva persona</button>

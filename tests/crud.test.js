@@ -1,4 +1,6 @@
-const { insertar, modificar, borrar, listar } = require('./index.');  
+
+const { insertar, modificar, borrar, listar } = require('../src/index');
+
 
 // Base de datos de prueba (para realizar las pruebas)
 let personas = [
