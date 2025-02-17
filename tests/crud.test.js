@@ -1,37 +1,119 @@
+// Supongamos que las funciones están en un archivo llamado 'crud.js'
+const { cargarTabla, anadePersona, borrarPersona, editarPersona, limpiarForm } = require('./crud');
 
-const { insertar, modificar, borrar, listar } = require('../src/index');
+test('anadePersona agrega una nueva persona correctamente', async () => {
+    // Simulamos el evento e y el contexto de la función
+    const e = { preventDefault: jest.fn() };
+    const mockFetchData = jest.fn(); // Mock de fetchData
+    global.fetchData = mockFetchData;
+    
+    // Llamamos a anadePersona
+    await anadePersona.call({ 
+        dataset: { idjugador: -1 }, 
+        nombre: 'Lionel', 
+        apellidos: 'Messi', 
+        fecha_nac: '1987-06-24', 
+        posicion: 'Delantero', 
+        nacionalidad: 'Argentina' 
+    }, e);
 
-
-// Base de datos de prueba (para realizar las pruebas)
-let personas = [
-    { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Delantero', nacionalidad: 'España' },
-    { id: 2, nombre: 'Ana', apellidos: 'Gómez', fecha_nac: '1985-05-15', posicion: 'Defensa', nacionalidad: 'México' },
-];
-
-// TEST de la funcion LISTAR
-test('Listar personas devuelve todas las personas', () => {
-    expect(listar()).toEqual(personas);
+    // Verificamos que fetchData se haya llamado con los datos correctos
+    expect(mockFetchData).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+            servicio: 'insertar',
+            nombre: 'Lionel',
+            apellidos: 'Messi',
+            fecha_nac: '1987-06-24',
+            posicion: 'Delantero',
+            nacionalidad: 'Argentina'
+        }),
+        expect.any(Function)
+    );
 });
 
-// TEST de la funcion INSERTAR
-test('Insertar una nueva persona', () => {
-    const nuevaPersona = { nombre: 'Carlos', apellidos: 'López', fecha_nac: '1992-03-20', posicion: 'Portero', nacionalidad: 'Argentina' };
-    insertar(nuevaPersona);
-    expect(listar()).toHaveLength(3);  // ver q la cantidad de persona aumenta
-    expect(listar()[2]).toEqual(expect.objectContaining(nuevaPersona));  // comprobar que la nueva persona se ha añadido a la lista
+test('borrarPersona elimina una persona correctamente', async () => {
+    const e = { preventDefault: jest.fn() };
+    const mockFetchData = jest.fn(); // Mock de fetchData
+    global.fetchData = mockFetchData;
+    global.confirm = jest.fn().mockReturnValue(true); // Simulamos la confirmación de borrado
+    
+    const jugador = { dataset: { idjugador: 1, nombreape: 'Lionel Messi' } };
+
+    // Llamamos a borrarPersona
+    await borrarPersona.call(jugador, e);
+
+    // Verificamos que fetchData haya sido llamada con la correcta solicitud para borrar
+    expect(mockFetchData).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+            servicio: 'borrar',
+            id: 1
+        }),
+        expect.any(Function)
+    );
 });
 
-// TEST de la funcion MODIFICAR
-test('Modificar una persona existente', () => {
-    const modificada = { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Centrocampista', nacionalidad: 'España' };
-    modificar(modificada);
-    expect(listar()[0].posicion).toBe('Centrocampista');  // comprobar que se ha actualizado la posicion del modificado
+test('editarPersona llena el formulario correctamente con los datos del jugador', async () => {
+    const mockFetchData = jest.fn(); // Mock de fetchData
+    global.fetchData = mockFetchData;
+
+    const jugador = { dataset: { idjugador: 1 } };
+    const mockDatos = {
+        id: 1,
+        nombre: 'Lionel',
+        apellidos: 'Messi',
+        fecha_nac: '1987-06-24',
+        posicion: 'Delantero',
+        nacionalidad: 'Argentina'
+    };
+    
+    // Simulamos la respuesta del servidor con los datos del jugador
+    mockFetchData.mockImplementationOnce((url, data, callback) => callback(mockDatos));
+
+    // Llamamos a editarPersona
+    await editarPersona.call(jugador, { preventDefault: jest.fn() });
+
+    // Verificamos que se llenaron correctamente los campos del formulario
+    expect(global.document.getElementById('nombre').value).toBe(mockDatos.nombre);
+    expect(global.document.getElementById('apellidos').value).toBe(mockDatos.apellidos);
+    expect(global.document.getElementById('fecha_nac').value).toBe(mockDatos.fecha_nac);
+    expect(global.document.getElementById('posicion').value).toBe(mockDatos.posicion);
+    expect(global.document.getElementById('nacionalidad').value).toBe(mockDatos.nacionalidad);
 });
 
-// TEST de la funcion BORRAR
-test('Borrar una persona elimina correctamente', () => {
-    const personaAEliminar = { id: 2 };
-    borrar(personaAEliminar);
-    expect(listar()).toHaveLength(2);  // comprobar que la cantidad de persona ha disminuido 
-    expect(listar()).not.toContainEqual(expect.objectContaining({ id: 2 }));  // comprobar que la la persona se ha eliminado de la tabla 
+test('limpiarForm limpia correctamente los campos del formulario', () => {
+    // Simulamos valores previos en los campos del formulario
+    document.getElementById('nombre').value = 'Lionel';
+    document.getElementById('apellidos').value = 'Messi';
+    document.getElementById('fecha_nac').value = '1987-06-24';
+    document.getElementById('posicion').value = 'Delantero';
+    document.getElementById('nacionalidad').value = 'Argentina';
+
+    // Llamamos a limpiarForm
+    limpiarForm();
+
+    // Verificamos que los campos estén vacíos después de limpiar
+    expect(document.getElementById('nombre').value).toBe('');
+    expect(document.getElementById('apellidos').value).toBe('');
+    expect(document.getElementById('fecha_nac').value).toBe('');
+    expect(document.getElementById('posicion').value).toBe('');
+    expect(document.getElementById('nacionalidad').value).toBe('');
+});
+
+test('cargarTabla llama a fetchData para obtener los datos', async () => {
+    const mockFetchData = jest.fn(); // Mock de fetchData
+    global.fetchData = mockFetchData;
+
+    // Simulamos que la tabla es cargada al llamar a cargarTabla
+    await cargarTabla();
+
+    // Verificamos que fetchData haya sido llamado con los datos correctos
+    expect(mockFetchData).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+            servicio: 'listar'
+        }),
+        expect.any(Function)
+    );
 });
