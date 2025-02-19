@@ -1,13 +1,16 @@
 var url='http://localhost/clase/CRUD-despliegue/backend/servidor.php';
 
+
 /*window.onload = function () {
     cargarTabla();
     document.getElementById("btNuevoJugador").onclick = mostrarForm;
     document.getElementById("btCancelar").onclick = cancelarForm;
     document.getElementById("btAnade").onclick = anadePersona;
 
+
     document.getElementById("btAnade").dataset.idjugador = -1;
 }*/
+
 
 document.addEventListener('DOMContentLoaded', function () {
     cargarTabla();
@@ -15,8 +18,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("btCancelar").onclick = cancelarForm;
     document.getElementById("btAnade").onclick = anadePersona;
 
+
     document.getElementById("btAnade").dataset.idjugador = -1;
 });
+
+
 
 
 function Crea_Fila(aCol) {
@@ -31,11 +37,8 @@ function Crea_Fila(aCol) {
     return fila;
 }
 
+
 function LlenaTabla(aTabla, cuerpoTabla) {
-    if (!aTabla || !Array.isArray(aTabla)) {
-        console.error("aTabla no es un array o está vacío");
-        return;
-    }
     var fila, td, boton;
     for (var i = 0; i < aTabla.length; i++) {
         fila = Crea_Fila(aTabla[i]);
@@ -43,18 +46,22 @@ function LlenaTabla(aTabla, cuerpoTabla) {
         td = document.createElement('td');
         boton = document.createElement('button');
 
+
         boton.innerHTML = "Borrar";
-        
+       
         boton.onclick = borrarPersona;
         boton.dataset.idjugador = aTabla[i].id;
         boton.dataset.nombreape = aTabla[i].nombre + " " + aTabla[i].apellidos;
 
+
         td.appendChild(boton);
         fila.appendChild(td);
+
 
         //EDITAR
         td = document.createElement('td');
         boton = document.createElement('button');
+
 
         boton.innerHTML = "Editar";
         boton.onclick = editarPersona;
@@ -62,9 +69,11 @@ function LlenaTabla(aTabla, cuerpoTabla) {
         td.appendChild(boton);
         fila.appendChild(td);
 
+
         cuerpoTabla.appendChild(fila);
     }
 }
+
 
 function cargarTabla() {
     var p = {
@@ -73,11 +82,13 @@ function cargarTabla() {
     fetchData(url, p, MuestraPersonas);
 }
 
+
 function MuestraPersonas(datos) {
     console.log(datos);
     document.getElementById("filas_tabla").innerHTML = "";
     LlenaTabla(datos, document.getElementById("filas_tabla"));
 }
+
 
 function anadePersona(e) {
     e.preventDefault();
@@ -96,6 +107,7 @@ function anadePersona(e) {
     cancelarForm();
 }
 
+
 function borrarPersona(e) {
     e.preventDefault();
     if (confirm("¿Deseas eliminar a: '" + this.dataset.nombreape + "'?")) {
@@ -107,9 +119,11 @@ function borrarPersona(e) {
     }
 }
 
+
 function mostrarForm() {
     console.log("idjugador = " + document.getElementById("btAnade").dataset.idjugador);
     document.getElementById("formPersonas").classList.add("ver");
+
 
     if (document.getElementById("btAnade").dataset.idjugador == "-1") {
         document.querySelector("#formPersonas legend").innerHTML = "Añadir";
@@ -120,11 +134,13 @@ function mostrarForm() {
     }
 }
 
+
 function cancelarForm() {
     document.getElementById("formPersonas").classList.remove("ver");
     document.getElementById("btAnade").dataset.idjugador = "-1";
     limpiarForm();
 }
+
 
 function editarPersona(e) {
     e.preventDefault();
@@ -133,8 +149,10 @@ function editarPersona(e) {
         id: this.dataset.idjugador
     };
 
+
     fetchData(url, p, llenaForm);
 }
+
 
 function llenaForm(datos) {
     console.log(datos);
@@ -145,8 +163,10 @@ function llenaForm(datos) {
     document.getElementById("nacionalidad").value = datos.nacionalidad;
     document.getElementById("btAnade").dataset.idjugador = datos.id;
 
+
     mostrarForm();
 }
+
 
 function limpiarForm() {
     document.getElementById("nombre").value = "";
@@ -155,6 +175,7 @@ function limpiarForm() {
     document.getElementById("posicion").value = "";
     document.getElementById("nacionalidad").value = "";
 }
+
 
 function fetchData(url, data, callback) {
     fetch(url, {
@@ -168,7 +189,3 @@ function fetchData(url, data, callback) {
     .then(callback)
     .catch(error => console.error('Error:', error));
 }
-
-module.exports = {anadePersona, editarPersona, borrarPersona, LlenaTabla};
-
-

@@ -1,35 +1,44 @@
-// crud.test.js: Pruebas CRUD simplificadas
-const { anadePersona, editarPersona, borrarPersona, LlenaTabla } = require('../frontend/script');
+const { insertar, modificar, borrar, listar } = require('../frontend/index1');
 
-// Mock de la base de datos para pruebas
-global.personas = [
-  { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Delantero', nacionalidad: 'España' },
-  { id: 2, nombre: 'Ana', apellidos: 'Gómez', fecha_nac: '1985-05-15', posicion: 'Defensa', nacionalidad: 'México' },
+
+
+
+// Base de datos de prueba (para realizar las pruebas)
+let personas = [
+    { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Delantero', nacionalidad: 'España' },
+    { id: 2, nombre: 'Ana', apellidos: 'Gómez', fecha_nac: '1985-05-15', posicion: 'Defensa', nacionalidad: 'México' },
 ];
 
-// Prueba LISTAR
-test('Listar devuelve todas las personas', () => {
-  expect(LlenaTabla()).toEqual(global.personas);
+
+// TEST de la funcion LISTAR
+test('Listar personas devuelve todas las personas', () => {
+    expect(listar()).toEqual(personas);
 });
 
-// Prueba INSERTAR
+
+// TEST de la funcion INSERTAR
 test('Insertar una nueva persona', () => {
-  const nueva = { nombre: 'Carlos', apellidos: 'López', fecha_nac: '1992-03-20', posicion: 'Portero', nacionalidad: 'Argentina' };
-  anadePersona(nueva);
-  expect(LlenaTabla().length).toBe(3);
-  expect(LlenaTabla().some(p => p.nombre === 'Carlos')).toBe(true);
+    const nuevaPersona = { nombre: 'Carlos', apellidos: 'López', fecha_nac: '1992-03-20', posicion: 'Portero', nacionalidad: 'Argentina' };
+    insertar(nuevaPersona);
+    expect(listar()).toHaveLength(3);  // ver q la cantidad de persona aumenta
+    expect(listar()[2]).toEqual(expect.objectContaining(nuevaPersona));  // comprobar que la nueva persona se ha añadido a la lista
 });
 
-// Prueba MODIFICAR
-test('Modificar una persona', () => {
-  const actualizada = { id: 1, posicion: 'Centrocampista' };
-  editarPersona(actualizada);
-  expect(LlenaTabla().find(p => p.id === 1).posicion).toBe('Centrocampista');
+
+// TEST de la funcion MODIFICAR
+test('Modificar una persona existente', () => {
+    const modificada = { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Centrocampista', nacionalidad: 'España' };
+    modificar(modificada);
+    expect(listar()[0].posicion).toBe('Centrocampista');  // comprobar que se ha actualizado la posicion del modificado
 });
 
-// Prueba BORRAR
-test('Borrar una persona', () => {
-  borrarPersona(2);
-  expect(LlenaTabla().length).toBe(2);
-  expect(LlenaTabla().some(p => p.id === 2)).toBe(false);
+
+// TEST de la funcion BORRAR
+test('Borrar una persona elimina correctamente', () => {
+    const personaAEliminar = { id: 2 };
+    borrar(personaAEliminar);
+    expect(listar()).toHaveLength(2);  // comprobar que la cantidad de persona ha disminuido
+    expect(listar()).not.toContainEqual(expect.objectContaining({ id: 2 }));  // comprobar que la la persona se ha eliminado de la tabla
 });
+
+
