@@ -1,4 +1,13 @@
-var url = 'http://localhost/clase/CRUD-despliegue/backend/servidor.php';
+var url='http://localhost/clase/CRUD-despliegue/backend/servidor.php';
+
+/*window.onload = function () {
+    cargarTabla();
+    document.getElementById("btNuevoJugador").onclick = mostrarForm;
+    document.getElementById("btCancelar").onclick = cancelarForm;
+    document.getElementById("btAnade").onclick = anadePersona;
+
+    document.getElementById("btAnade").dataset.idjugador = -1;
+}*/
 
 document.addEventListener('DOMContentLoaded', function () {
     cargarTabla();
@@ -8,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById("btAnade").dataset.idjugador = -1;
 });
+
 
 function Crea_Fila(aCol) {
     var fila = document.createElement("tr");
@@ -25,11 +35,12 @@ function LlenaTabla(aTabla, cuerpoTabla) {
     var fila, td, boton;
     for (var i = 0; i < aTabla.length; i++) {
         fila = Crea_Fila(aTabla[i]);
-        // BORRAR
+        //BORRAR
         td = document.createElement('td');
         boton = document.createElement('button');
 
         boton.innerHTML = "Borrar";
+        
         boton.onclick = borrarPersona;
         boton.dataset.idjugador = aTabla[i].id;
         boton.dataset.nombreape = aTabla[i].nombre + " " + aTabla[i].apellidos;
@@ -37,7 +48,7 @@ function LlenaTabla(aTabla, cuerpoTabla) {
         td.appendChild(boton);
         fila.appendChild(td);
 
-        // EDITAR
+        //EDITAR
         td = document.createElement('td');
         boton = document.createElement('button');
 
@@ -91,6 +102,7 @@ function borrarPersona(e) {
         fetchData(url, p, MuestraPersonas);
     }
 }
+
 function mostrarForm() {
     console.log("idjugador = " + document.getElementById("btAnade").dataset.idjugador);
     document.getElementById("formPersonas").classList.add("ver");
@@ -152,3 +164,5 @@ function fetchData(url, data, callback) {
     .then(callback)
     .catch(error => console.error('Error:', error));
 }
+
+

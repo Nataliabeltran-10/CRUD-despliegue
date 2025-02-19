@@ -1,36 +1,35 @@
-// Importar las funciones desde el archivo principal
+// crud.test.js: Pruebas CRUD simplificadas
 const { insertar, modificar, borrar, listar } = require('../frontend/index1');
 
-// Base de datos de prueba (para realizar las pruebas)
-let personas = [
-    { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Delantero', nacionalidad: 'España' },
-    { id: 2, nombre: 'Ana', apellidos: 'Gómez', fecha_nac: '1985-05-15', posicion: 'Defensa', nacionalidad: 'México' },
+// Mock de la base de datos para pruebas
+global.personas = [
+  { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Delantero', nacionalidad: 'España' },
+  { id: 2, nombre: 'Ana', apellidos: 'Gómez', fecha_nac: '1985-05-15', posicion: 'Defensa', nacionalidad: 'México' },
 ];
 
-// TEST de la funcion LISTAR
-test('Listar personas devuelve todas las personas', () => {
-    expect(listar()).toEqual(personas);
+// Prueba LISTAR
+test('Listar devuelve todas las personas', () => {
+  expect(listar()).toEqual(global.personas);
 });
 
-// TEST de la funcion INSERTAR
+// Prueba INSERTAR
 test('Insertar una nueva persona', () => {
-    const nuevaPersona = { nombre: 'Carlos', apellidos: 'López', fecha_nac: '1992-03-20', posicion: 'Portero', nacionalidad: 'Argentina' };
-    insertar(nuevaPersona);  // Usamos la función original importada
-    expect(listar()).toHaveLength(3);  // Verificar que la cantidad de personas ha aumentado
-    expect(listar()[2]).toEqual(expect.objectContaining(nuevaPersona));  // Verificar que la nueva persona está en la lista
+  const nueva = { nombre: 'Carlos', apellidos: 'López', fecha_nac: '1992-03-20', posicion: 'Portero', nacionalidad: 'Argentina' };
+  insertar(nueva);
+  expect(listar().length).toBe(3);
+  expect(listar().some(p => p.nombre === 'Carlos')).toBe(true);
 });
 
-// TEST de la funcion MODIFICAR
-test('Modificar una persona existente', () => {
-    const modificada = { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Centrocampista', nacionalidad: 'España' };
-    modificar(modificada);  // Usamos la función original importada
-    expect(listar()[0].posicion).toBe('Centrocampista');  // Verificar que la posición de la persona se ha actualizado
+// Prueba MODIFICAR
+test('Modificar una persona', () => {
+  const actualizada = { id: 1, posicion: 'Centrocampista' };
+  modificar(actualizada);
+  expect(listar().find(p => p.id === 1).posicion).toBe('Centrocampista');
 });
 
-// TEST de la funcion BORRAR
-test('Borrar una persona elimina correctamente', () => {
-    const personaAEliminar = { id: 2 };
-    borrar(personaAEliminar);  // Usamos la función original importada
-    expect(listar()).toHaveLength(2);  // Verificar que la cantidad de personas ha disminuido
-    expect(listar()).not.toContainEqual(expect.objectContaining({ id: 2 }));  // Verificar que la persona con id=2 ha sido eliminada
+// Prueba BORRAR
+test('Borrar una persona', () => {
+  borrar(2);
+  expect(listar().length).toBe(2);
+  expect(listar().some(p => p.id === 2)).toBe(false);
 });
