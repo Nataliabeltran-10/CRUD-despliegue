@@ -32,6 +32,10 @@ function Crea_Fila(aCol) {
 }
 
 function LlenaTabla(aTabla, cuerpoTabla) {
+    if (!aTabla || !Array.isArray(aTabla)) {
+        console.error("aTabla no es un array o está vacío");
+        return;
+    }
     var fila, td, boton;
     for (var i = 0; i < aTabla.length; i++) {
         fila = Crea_Fila(aTabla[i]);
@@ -164,5 +168,7 @@ function fetchData(url, data, callback) {
     .then(callback)
     .catch(error => console.error('Error:', error));
 }
+
+module.exports = {anadePersona, editarPersona, borrarPersona, LlenaTabla};
 
 

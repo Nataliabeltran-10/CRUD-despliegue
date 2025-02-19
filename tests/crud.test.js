@@ -1,5 +1,5 @@
 // crud.test.js: Pruebas CRUD simplificadas
-const { insertar, modificar, borrar, listar } = require('../frontend/index1');
+const { anadePersona, editarPersona, borrarPersona, LlenaTabla } = require('../frontend/script');
 
 // Mock de la base de datos para pruebas
 global.personas = [
@@ -9,27 +9,27 @@ global.personas = [
 
 // Prueba LISTAR
 test('Listar devuelve todas las personas', () => {
-  expect(listar()).toEqual(global.personas);
+  expect(LlenaTabla()).toEqual(global.personas);
 });
 
 // Prueba INSERTAR
 test('Insertar una nueva persona', () => {
   const nueva = { nombre: 'Carlos', apellidos: 'López', fecha_nac: '1992-03-20', posicion: 'Portero', nacionalidad: 'Argentina' };
-  insertar(nueva);
-  expect(listar().length).toBe(3);
-  expect(listar().some(p => p.nombre === 'Carlos')).toBe(true);
+  anadePersona(nueva);
+  expect(LlenaTabla().length).toBe(3);
+  expect(LlenaTabla().some(p => p.nombre === 'Carlos')).toBe(true);
 });
 
 // Prueba MODIFICAR
 test('Modificar una persona', () => {
   const actualizada = { id: 1, posicion: 'Centrocampista' };
-  modificar(actualizada);
-  expect(listar().find(p => p.id === 1).posicion).toBe('Centrocampista');
+  editarPersona(actualizada);
+  expect(LlenaTabla().find(p => p.id === 1).posicion).toBe('Centrocampista');
 });
 
 // Prueba BORRAR
 test('Borrar una persona', () => {
-  borrar(2);
-  expect(listar().length).toBe(2);
-  expect(listar().some(p => p.id === 2)).toBe(false);
+  borrarPersona(2);
+  expect(LlenaTabla().length).toBe(2);
+  expect(LlenaTabla().some(p => p.id === 2)).toBe(false);
 });
