@@ -14,7 +14,7 @@ jobs:
 
       - run:
           name: Instalar Jest globalmente
-          command: npm install -g jest  
+          command: sudo npm install -g jest  
 
       - run:
           name: Verificar instalación de Jest
