@@ -21,8 +21,8 @@ function Crea_Fila(aCol) {
 }
 
 function LlenaTabla(aTabla, cuerpoTabla) {
-    if (!Array.isArray(aTabla)) return;  // Asegurar que se recibe un array válido
-    cuerpoTabla.innerHTML = ""; // Limpiar la tabla antes de llenarla
+    if (!Array.isArray(aTabla)) return;
+    cuerpoTabla.innerHTML = "";
 
     aTabla.forEach(jugador => {
         let fila = Crea_Fila(jugador);
@@ -61,7 +61,7 @@ function MuestraPersonas(datos) {
 }
 
 function anadePersona(e) {
-    if (e && e.preventDefault) e.preventDefault(); // Evitar error en tests
+    if (e && e.preventDefault) e.preventDefault();
 
     let p = {
         servicio: document.getElementById("btAnade").dataset.idjugador == -1 ? "insertar" : "modificar",
@@ -79,7 +79,7 @@ function anadePersona(e) {
 }
 
 function borrarPersona(e) {
-    if (e && e.preventDefault) e.preventDefault(); // Evitar error en tests
+    if (e && e.preventDefault) e.preventDefault();
 
     if (confirm(`¿Deseas eliminar a: '${this.dataset.nombreape}'?`)) {
         fetchData(url, { servicio: "borrar", id: this.dataset.idjugador }, MuestraPersonas);
@@ -87,21 +87,37 @@ function borrarPersona(e) {
 }
 
 function mostrarForm() {
-    document.getElementById("formPersonas").classList.add("ver");
-    let esNuevo = document.getElementById("btAnade").dataset.idjugador == "-1";
-    document.querySelector("#formPersonas legend").innerHTML = esNuevo ? "Añadir" : "Modificar";
-    document.getElementById("btAnade").innerHTML = esNuevo ? "Añadir" : "Modificar";
+    let form = document.getElementById("formPersonas");
+    if (!form) {
+        console.error("Error: No se encontró el formulario en el DOM.");
+        return;
+    }
+    form.classList.add("ver");
+    let legend = document.querySelector("#formPersonas legend");
+    if (legend) {
+        let esNuevo = document.getElementById("btAnade").dataset.idjugador == "-1";
+        legend.innerHTML = esNuevo ? "Añadir" : "Modificar";
+    } else {
+       // console.log("Error: No se encontró el <legend> dentro del formulario.");
+    }
+
+    let btn = document.getElementById("btAnade");
+    if (btn) {
+        btn.innerHTML = btn.dataset.idjugador == "-1" ? "Añadir" : "Modificar";
+    } else {
+        console.error("Error: No se encontró el botón btAnade en el DOM.");
+    }
 }
 
 function cancelarForm() {
-    document.getElementById("formPersonas").classList.remove("ver");
+    let form = document.getElementById("formPersonas");
+    if (form) form.classList.remove("ver");
     document.getElementById("btAnade").dataset.idjugador = "-1";
     limpiarForm();
 }
 
 function editarPersona(e) {
     if (e && e.preventDefault) e.preventDefault();
-
     fetchData(url, { servicio: "selJugadorID", id: this.dataset.idjugador }, llenaForm);
 }
 
