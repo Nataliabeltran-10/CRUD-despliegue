@@ -3,29 +3,29 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: circleci/node:16  # Utilizamos una imagen de Docker con Node.js preinstalado
-    working_directory: ~/repo  # Definimos el directorio de trabajo
+      - image: circleci/node:16  
+    working_directory: ~/repo  
     steps:
-      - checkout  # Clonamos el repositorio
+      - checkout  
       
       - run:
           name: Instalar dependencias
-          command: npm install  # Instalamos las dependencias del proyecto
+          command: npm install  
 
       - run:
           name: Instalar Jest globalmente
-          command: npm install -g jest  # Instalamos Jest globalmente para poder ejecutarlo desde la línea de comandos
+          command: npm install -g jest  
 
       - run:
           name: Verificar instalación de Jest
-          command: npx jest --version  # Verificamos que Jest esté instalado correctamente
+          command: npx jest --version  
 
       - run:
           name: Ejecutar pruebas
-          command: npm test  # Ejecutamos las pruebas con Jest
+          command: npm test 
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - test  # Ejecutamos el job "test" en el flujo de trabajo
+      - test  

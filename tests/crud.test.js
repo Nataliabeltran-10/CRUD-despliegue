@@ -1,44 +1,66 @@
-const { insertar, modificar, borrar, listar } = require('../frontend/index1');
+const { LlenaTabla, editarPersona, borrarPersona, anadePersona } = require('../frontend/index1');
 
+// Mock para `fetch`
+global.fetch = jest.fn((url, options) =>
+  Promise.resolve({
+    json: () => Promise.resolve([{ id: 1, nombre: 'Juan', apellidos: 'Pérez' }]),
+  })
+);
 
+// Mock para `document.getElementById`
+document.getElementById = jest.fn((id) => {
+  if (id === "filas_tabla") {
+    const tbody = document.createElement("tbody");
+    return tbody; // Se devuelve un tbody real para evitar el error de `appendChild`
+  }
+  return {
+    innerHTML: "",
+    classList: { add: jest.fn(), remove: jest.fn() },
+    dataset: { idjugador: "-1" },
+    value: ""
+  };
+});
 
+// Mock para `confirm`
+jest.spyOn(global, 'confirm').mockImplementation(() => true);
 
-// Base de datos de prueba (para realizar las pruebas)
-let personas = [
-    { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Delantero', nacionalidad: 'España' },
-    { id: 2, nombre: 'Ana', apellidos: 'Gómez', fecha_nac: '1985-05-15', posicion: 'Defensa', nacionalidad: 'México' },
-];
-
-
-// TEST de la funcion LISTAR
+// TEST de la función LISTAR
 test('Listar personas devuelve todas las personas', () => {
-    expect(listar()).toEqual(personas);
+  let tableBody = document.getElementById("filas_tabla");
+  LlenaTabla([{ id: 1, nombre: 'Juan', apellidos: 'Pérez' }], tableBody);
+  expect(tableBody.children.length).toBe(1);
 });
 
+// Mock de `preventDefault`
+const mockEvent = {
+  preventDefault: jest.fn(),
+  dataset: { idjugador: "1", nombreape: "Juan Pérez" }
+};
 
-// TEST de la funcion INSERTAR
-test('Insertar una nueva persona', () => {
-    const nuevaPersona = { nombre: 'Carlos', apellidos: 'López', fecha_nac: '1992-03-20', posicion: 'Portero', nacionalidad: 'Argentina' };
-    insertar(nuevaPersona);
-    expect(listar()).toHaveLength(3);  // ver q la cantidad de persona aumenta
-    expect(listar()[2]).toEqual(expect.objectContaining(nuevaPersona));  // comprobar que la nueva persona se ha añadido a la lista
+// TEST de la función INSERTAR
+test('Insertar una nueva persona', async () => {
+  await anadePersona(mockEvent);
+  expect(mockEvent.preventDefault).toHaveBeenCalled();
+  expect(fetch).toHaveBeenCalled();
 });
 
+// TEST de la función MODIFICAR
+test('Modificar una persona existente', async () => {
+  const mockEvent = {
+    preventDefault: jest.fn(),
+    dataset: { idjugador: "1" } // Se agrega `dataset.idjugador`
+  };
 
-// TEST de la funcion MODIFICAR
-test('Modificar una persona existente', () => {
-    const modificada = { id: 1, nombre: 'Juan', apellidos: 'Pérez', fecha_nac: '1990-01-01', posicion: 'Centrocampista', nacionalidad: 'España' };
-    modificar(modificada);
-    expect(listar()[0].posicion).toBe('Centrocampista');  // comprobar que se ha actualizado la posicion del modificado
+  await editarPersona.call(mockEvent, mockEvent); // Se usa `.call()` para que `this` apunte al evento simulado
+  expect(fetch).toHaveBeenCalledWith(
+    expect.any(String),
+    expect.any(Object) // No se espera un tercer parámetro, ya que `fetch` solo recibe `url` y `options`
+  );
 });
 
-
-// TEST de la funcion BORRAR
-test('Borrar una persona elimina correctamente', () => {
-    const personaAEliminar = { id: 2 };
-    borrar(personaAEliminar);
-    expect(listar()).toHaveLength(2);  // comprobar que la cantidad de persona ha disminuido
-    expect(listar()).not.toContainEqual(expect.objectContaining({ id: 2 }));  // comprobar que la la persona se ha eliminado de la tabla
+// TEST de la función BORRAR
+test('Borrar una persona elimina correctamente', async () => {
+  await borrarPersona.call(mockEvent, mockEvent); // Se usa `.call()` para evitar `this.dataset` como `undefined`
+  expect(fetch).toHaveBeenCalled();
+  expect(global.confirm).toHaveBeenCalledWith("¿Deseas eliminar a: 'Juan Pérez'?");
 });
-
-
