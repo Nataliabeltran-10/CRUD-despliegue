@@ -24,8 +24,22 @@ jobs:
           name: Ejecutar pruebas
           command: npm test 
 
+  package:
+    docker:
+      - image: circleci/node:16
+    steps:
+      - checkout
+      - run:
+          name: Crear artefacto de entrega
+          command: tar -czf build.tar.gz .
+      - store_artifacts:
+          path: build.tar.gz
+
 workflows:
   version: 2
-  build_and_test:
+  build_test_package:
     jobs:
-      - test  
+      - test
+      - package:
+          requires:
+            - test
