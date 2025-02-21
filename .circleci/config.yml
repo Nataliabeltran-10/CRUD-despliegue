@@ -26,8 +26,14 @@ jobs:
     steps:
       - checkout  # Asegura que el código esté disponible
       - run:
-          name: Verificar archivos disponibles
+          name: Verificar archivos en el directorio
           command: ls -lah
+      - run:
+          name: Verificar permisos de archivos
+          command: find . -type f -exec ls -lah {} +
+      - run:
+          name: Ajustar permisos
+          command: chmod -R 755 .
       - run:
           name: Crear artefacto de entrega
           command: sudo tar --exclude='.git' --exclude='node_modules' --ignore-failed-read -czf build.tar.gz .
