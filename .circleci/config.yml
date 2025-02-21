@@ -7,35 +7,25 @@ jobs:
     working_directory: ~/repo  
     steps:
       - checkout  
+      
       - run:
           name: Instalar dependencias
           command: npm install  
+
       - run:
           name: Instalar Jest globalmente
           command: sudo npm install -g jest  
+
       - run:
           name: Verificar instalación de Jest
           command: npx jest --version  
+
       - run:
           name: Ejecutar pruebas
           command: npm test 
 
-  package:
-    docker:
-      - image: circleci/node:16
-    steps:
-      - checkout
-      - run:
-          name: Crear artefacto de entrega
-          command: tar -czf build.tar.gz .
-      - store_artifacts:
-          path: build.tar.gz
-
 workflows:
   version: 2
-  build_test_package:
+  build_and_test:
     jobs:
-      - test
-      - package:
-          requires:
-            - test
+      - test  
