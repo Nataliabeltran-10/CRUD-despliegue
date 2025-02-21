@@ -28,7 +28,7 @@ jobs:
     docker:
       - image: circleci/node:16
     steps:
-      - checkout
+      - checkout  # Asegura que el código esté disponible
       - run:
           name: Crear artefacto de entrega
           command: tar -czf build.tar.gz .
