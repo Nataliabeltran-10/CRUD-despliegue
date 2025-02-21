@@ -7,19 +7,15 @@ jobs:
     working_directory: ~/repo  
     steps:
       - checkout  
-      
       - run:
           name: Instalar dependencias
           command: npm install  
-
       - run:
           name: Instalar Jest globalmente
           command: sudo npm install -g jest  
-
       - run:
           name: Verificar instalación de Jest
           command: npx jest --version  
-
       - run:
           name: Ejecutar pruebas
           command: npm test 
@@ -30,11 +26,11 @@ jobs:
     steps:
       - checkout  # Asegura que el código esté disponible
       - run:
-          name: Listar archivos antes de empaquetar
+          name: Verificar archivos disponibles
           command: ls -lah
       - run:
           name: Crear artefacto de entrega
-          command: tar --exclude='.git' --exclude='node_modules' --ignore-failed-read -czf build.tar.gz .
+          command: sudo tar --exclude='.git' --exclude='node_modules' --ignore-failed-read -czf build.tar.gz .
       - store_artifacts:
           path: build.tar.gz
 
