@@ -37,35 +37,6 @@ jobs:
             else
               echo "SLACK_WEBHOOK_URL no está definido, omitiendo notificación."
             fi
-
-  deploy:
-    docker:
-      - image: circleci/node:16
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: Validar variables de entorno
-          command: |
-            if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_IMAGE_NAME" ]; then
-              echo "ERROR: DOCKER_USERNAME o DOCKER_IMAGE_NAME no están definidos"
-              exit 1
-            fi
-      - run:
-          name: Construir imagen Docker
-          command: docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest .
-      - run:
-          name: Iniciar sesión en Docker Hub
-          command: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - run:
-          name: Subir imagen a Docker Hub
-          command: docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest
-      - run:
-          name: Desplegar en el servidor
-          command: |
-            ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest && docker stop app || true && docker rm app || true && docker run -d --name app -p 80:3000 $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest"
-
 workflows:
   version: 2
   build_test_deploy:
@@ -74,6 +45,4 @@ workflows:
       - delivery:
           requires:
             - test
-      - deploy:
-          requires:
-            - delivery
+
