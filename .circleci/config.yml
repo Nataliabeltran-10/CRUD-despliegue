@@ -46,6 +46,13 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Validar variables de entorno
+          command: |
+            if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_IMAGE_NAME" ]; then
+              echo "ERROR: DOCKER_USERNAME o DOCKER_IMAGE_NAME no están definidos"
+              exit 1
+            fi
+      - run:
           name: Construir imagen Docker
           command: docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest .
       - run:
