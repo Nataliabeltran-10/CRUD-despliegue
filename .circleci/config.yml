@@ -32,7 +32,11 @@ jobs:
       - run:
           name: Enviar notificación (Slack, Email, etc.)
           command: |
-            curl -X POST -H 'Content-type: application/json' --data '{"text":"El build está listo para ser desplegado."}' $SLACK_WEBHOOK_URL
+            if [ -z "$SLACK_WEBHOOK_URL" ]; then
+              echo "SLACK_WEBHOOK_URL no está definido"
+              exit 1
+            fi
+            curl -X POST -H 'Content-type: application/json' --data '{"text":"El build está listo para ser desplegado."}' "$SLACK_WEBHOOK_URL"
 
   deploy:
     docker:
