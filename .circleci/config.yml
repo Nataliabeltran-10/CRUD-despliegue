@@ -40,7 +40,7 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/python:3.8  # Esto es un ejemplo; usa la imagen que necesites
+      - image: circleci/node:16
     working_directory: ~/repo
     steps:
       - checkout
