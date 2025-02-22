@@ -45,18 +45,27 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Configurar SSH para despliegue
+          name: Configurar clave privada SSH
           command: |
             mkdir -p ~/.ssh
             echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
+
+      - run:
+          name: Agregar el host al archivo known_hosts
+          command: |
             ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
+
       - run:
           name: Verificar conexión SSH
-          command: ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_HOST "echo 'Conexión SSH exitosa'"
+          command: |
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_HOST "echo 'Conexión SSH exitosa'"
+
       - run:
           name: Desplegar aplicación
-          command: ssh $SSH_USER@$SERVER_HOST "cd /ruta/del/proyecto && git pull origin main && npm install && pm2 restart app"
+          command: |
+            ssh $SSH_USER@$SERVER_HOST "cd /ruta/del/proyecto && git pull origin main && npm install && pm2 restart app"
+
       - run:
           name: Notificar despliegue exitoso
           command: |
