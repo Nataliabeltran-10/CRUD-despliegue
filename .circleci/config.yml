@@ -47,12 +47,18 @@ jobs:
       - run:
           name: Desplegar aplicación
           command: |
-            echo "Desplegando la aplicación..."
-            # Aquí deberías agregar tu comando real de despliegue (ejemplo con AWS CLI)
-            # aws ecs update-service --cluster mi-cluster --service mi-servicio --force-new-deployment
-            # O si es Heroku:
-            git remote add heroku https://git.heroku.com/mi-app.git
-            git push heroku master
+            #!/bin/bash
+            echo "Iniciando despliegue a producción..."
+
+            # Ejemplo de comandos para desplegar a un servidor remoto via SSH
+            ssh -o StrictHostKeyChecking=no user@your-server.com << 'EOF'
+            cd /path/to/your/app
+            git pull origin main  # Obtener la última versión de la rama principal
+            npm install  # Instalar dependencias
+            npm run build  # Si tienes una construcción previa
+            pm2 restart app  # Reiniciar el servidor (si usas pm2)
+            
+            echo "Despliegue completado."
 
 workflows:
   version: 2

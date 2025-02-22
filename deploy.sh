@@ -8,6 +8,6 @@ ssh -o StrictHostKeyChecking=no user@your-server.com << 'EOF'
   npm install  # Instalar dependencias
   npm run build  # Si tienes una construcción previa
   pm2 restart app  # Reiniciar el servidor (si usas pm2)
-EOF
+
 
 echo "Despliegue completado."
