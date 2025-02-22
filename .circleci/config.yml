@@ -3,26 +3,36 @@ version: 2.1
 jobs:
   test:
     docker:
+      - image: circleci/node:16  
+    working_directory: ~/repo  
+    steps:
+      - checkout  
+      - run:
+          name: Instalar dependencias
+          command: npm install  
+      - run:
+          name: Instalar Jest globalmente
+          command: sudo npm install -g jest  
+      - run:
+          name: Verificar instalación de Jest
+          command: npx jest --version  
+      - run:
+          name: Ejecutar pruebas
+          command: npm test 
+
+  delivery:
+    docker:
       - image: circleci/node:16
     working_directory: ~/repo
     steps:
       - checkout
-
       - run:
-          name: Instalar dependencias
-          command: npm install
-
+          name: Notificar sobre el estado del build
+          command: echo "Las pruebas han pasado. Listo para entrega."
       - run:
-          name: Instalar Jest globalmente
-          command: sudo npm install -g jest
-
-      - run:
-          name: Verificar instalación de Jest
-          command: npx jest --version
-
-      - run:
-          name: Ejecutar pruebas
-          command: npm test
+          name: Enviar notificación (Slack, Email, etc.)
+          command: |
+            curl -X POST -H 'Content-type: application/json' --data '{"text":"El build está listo para ser desplegado."}' $SLACK_WEBHOOK_URL
 
   deploy:
     docker:
@@ -30,24 +40,21 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-
       - run:
-          name: Instalar dependencias
-          command: npm install
-
-      - run:
-          name: Construir la aplicación
-          command: npm run build  # Asegúrate de que este comando esté definido en tu package.json
+          name: Desplegar en Heroku
+          command: |
+            echo "Autenticando en Heroku..."
+            echo "$HEROKU_API_KEY" | docker login --username=_ --password-stdin registry.heroku.com
+            git push heroku main
 
 workflows:
   version: 2
-  build_and_test:
+  build_test_deploy:
     jobs:
       - test
-      - deploy:
+      - delivery:
           requires:
             - test
-          filters:
-            branches:
-              only:
-                - main  # Solo se ejecuta en la rama main
+      - deploy:
+          requires:
+            - delivery
