@@ -3,22 +3,22 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: circleci/node:16  
-    working_directory: ~/repo  
+      - image: circleci/node:16
+    working_directory: ~/repo
     steps:
-      - checkout  
+      - checkout
       - run:
           name: Instalar dependencias
-          command: npm install  
+          command: npm install
       - run:
           name: Instalar Jest globalmente
-          command: sudo npm install -g jest  
+          command: sudo npm install -g jest
       - run:
           name: Verificar instalación de Jest
-          command: npx jest --version  
+          command: npx jest --version
       - run:
           name: Ejecutar pruebas
-          command: npm test 
+          command: npm test
 
   delivery:
     docker:
@@ -37,6 +37,23 @@ jobs:
             else
               echo "SLACK_WEBHOOK_URL no está definido, omitiendo notificación."
             fi
+
+  deploy:
+    docker:
+      - image: circleci/python:3.8  # Esto es un ejemplo; usa la imagen que necesites
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Desplegar aplicación
+          command: |
+            echo "Desplegando la aplicación..."
+            # Aquí deberías agregar tu comando real de despliegue (ejemplo con AWS CLI)
+            # aws ecs update-service --cluster mi-cluster --service mi-servicio --force-new-deployment
+            # O si es Heroku:
+            # git remote add heroku https://git.heroku.com/mi-app.git
+            # git push heroku master
+
 workflows:
   version: 2
   build_test_deploy:
@@ -45,4 +62,6 @@ workflows:
       - delivery:
           requires:
             - test
-
+      - deploy:
+          requires:
+            - delivery
