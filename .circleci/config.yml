@@ -40,24 +40,19 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/python:3.8  # Puedes cambiar la imagen si es necesario para tu entorno
+      - image: circleci/python:3.8  # Esto es un ejemplo; usa la imagen que necesites
     working_directory: ~/repo
     steps:
       - checkout
       - run:
-          name: Configurar Heroku CLI
+          name: Desplegar aplicación
           command: |
-            curl https://cli-assets.heroku.com/install.sh | sh
-            echo "Heroku CLI instalado."
-      - run:
-          name: Iniciar sesión en Heroku
-          command: |
-            echo "$HEROKU_API_KEY" | heroku auth:token
-      - run:
-          name: Desplegar aplicación en Heroku
-          command: |
-            git remote add heroku https://git.heroku.com/your-app-name.git
-            git push heroku master
+            echo "Desplegando la aplicación..."
+            # Aquí deberías agregar tu comando real de despliegue (ejemplo con AWS CLI)
+            # aws ecs update-service --cluster mi-cluster --service mi-servicio --force-new-deployment
+            # O si es Heroku:
+            # git remote add heroku https://git.heroku.com/mi-app.git
+            # git push heroku master
 
 workflows:
   version: 2
