@@ -44,24 +44,20 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - setup_remote_docker
       - run:
-          name: Instalar Heroku CLI
-          command: curl https://cli-assets.heroku.com/install.sh | sh
+          name: Construir imagen Docker
+          command: docker build -t $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest .
       - run:
-          name: Autenticar en Heroku
-          command: echo "$HEROKU_API_KEY" | heroku auth:token
+          name: Iniciar sesión en Docker Hub
+          command: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - run:
-          name: Configurar Git remoto para Heroku
-          command: git remote add heroku https://git.heroku.com/$HEROKU_APP_NAME.git || echo "Remote already exists"
+          name: Subir imagen a Docker Hub
+          command: docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest
       - run:
-          name: Configurar credenciales Git
+          name: Desplegar en el servidor
           command: |
-            git config --global credential.helper cache
-            echo "https://heroku:$HEROKU_API_KEY@git.heroku.com" > ~/.git-credentials
-            git config --global credential.useHttpPath true
-      - run:
-          name: Desplegar en Heroku
-          command: git push heroku main
+            ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest && docker stop app || true && docker rm app || true && docker run -d --name app -p 80:3000 $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest"
 
 workflows:
   version: 2
