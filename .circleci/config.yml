@@ -48,9 +48,8 @@ jobs:
           name: Desplegar aplicación
           command: |
             echo "Desplegando la aplicación..."
-            scp -r ./mi-aplicacion usuario@servidor:/ruta/destino
-            ssh usuario@servidor 'cd /ruta/destino && ./iniciar-aplicacion.sh'
-            
+            scp -r ./mi-aplicacion usuario@crud.com
+            ssh usuario@crud.com 'cd /ruta/destino && ./iniciar-aplicacion.sh'
 
 workflows:
   version: 2
