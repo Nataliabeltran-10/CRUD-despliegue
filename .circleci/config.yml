@@ -38,7 +38,7 @@ jobs:
               echo "SLACK_WEBHOOK_URL no está definido, omitiendo notificación."
             fi
 
-    deploy:
+  deploy:
     docker:
       - image: circleci/node:16
     working_directory: ~/repo
