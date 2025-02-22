@@ -3,22 +3,22 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: circleci/node:16  
-    working_directory: ~/repo  
+      - image: circleci/node:16
+    working_directory: ~/repo
     steps:
-      - checkout  
+      - checkout
       - run:
           name: Instalar dependencias
-          command: npm install  
+          command: npm install
       - run:
           name: Instalar Jest globalmente
-          command: sudo npm install -g jest  
+          command: sudo npm install -g jest
       - run:
           name: Verificar instalación de Jest
-          command: npx jest --version  
+          command: npx jest --version
       - run:
           name: Ejecutar pruebas
-          command: npm test 
+          command: npm test
 
   delivery:
     docker:
@@ -44,6 +44,13 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - run:
+          name: Verificar variables de entorno
+          command: |
+            echo "SSH_PRIVATE_KEY is set: $SSH_PRIVATE_KEY"
+            echo "SERVER_HOST is set: $SERVER_HOST"
+            echo "SSH_USER is set: $SSH_USER"
+
       - run:
           name: Configurar clave privada SSH
           command: |
