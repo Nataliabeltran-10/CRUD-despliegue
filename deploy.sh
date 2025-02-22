@@ -2,7 +2,7 @@
 echo "Iniciando despliegue a producción..."
 
 # Ejemplo de comandos para desplegar a un servidor remoto via SSH
-ssh -o StrictHostKeyChecking=no user@your-server.com << 'EOF'
+ssh -o StrictHostKeyChecking=no user@your-server.com 
   cd /path/to/your/app
   git pull origin main  # Obtener la última versión de la rama principal
   npm install  # Instalar dependencias
