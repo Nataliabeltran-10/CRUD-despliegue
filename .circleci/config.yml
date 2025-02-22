@@ -57,9 +57,9 @@ jobs:
             ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
       - run:
-          name: Verificar conexión SSH
+          name: Verificar conexión SSH (con depuración)
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_HOST "echo 'Conexión SSH exitosa'"
+            ssh -v -o StrictHostKeyChecking=no $SSH_USER@$SERVER_HOST "echo 'Conexión SSH exitosa'"
 
       - run:
           name: Desplegar aplicación
