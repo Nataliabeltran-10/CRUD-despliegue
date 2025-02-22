@@ -51,8 +51,8 @@ jobs:
             # Aquí deberías agregar tu comando real de despliegue (ejemplo con AWS CLI)
             # aws ecs update-service --cluster mi-cluster --service mi-servicio --force-new-deployment
             # O si es Heroku:
-            # git remote add heroku https://git.heroku.com/mi-app.git
-            # git push heroku master
+            git remote add heroku https://git.heroku.com/mi-app.git
+            git push heroku master
 
 workflows:
   version: 2
