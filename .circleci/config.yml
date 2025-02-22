@@ -3,22 +3,22 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: circleci/node:16
-    working_directory: ~/repo
+      - image: circleci/node:16  
+    working_directory: ~/repo  
     steps:
-      - checkout
+      - checkout  
       - run:
           name: Instalar dependencias
-          command: npm install
+          command: npm install  
       - run:
           name: Instalar Jest globalmente
-          command: sudo npm install -g jest
+          command: sudo npm install -g jest  
       - run:
           name: Verificar instalación de Jest
-          command: npx jest --version
+          command: npx jest --version  
       - run:
           name: Ejecutar pruebas
-          command: npm test
+          command: npm test 
 
   delivery:
     docker:
@@ -37,49 +37,6 @@ jobs:
             else
               echo "SLACK_WEBHOOK_URL no está definido, omitiendo notificación."
             fi
-
-  deploy:
-    docker:
-      - image: circleci/node:16
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - run:
-          name: Verificar variables de entorno
-          command: |
-            echo "SSH_PRIVATE_KEY is set: $SSH_PRIVATE_KEY"
-            echo "SERVER_HOST is set: $SERVER_HOST"
-            echo "SSH_USER is set: $SSH_USER"
-
-      - run:
-          name: Configurar clave privada SSH
-          command: |
-            mkdir -p ~/.ssh
-            echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-
-      - run:
-          name: Agregar el host al archivo known_hosts
-          command: |
-            ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
-
-      - run:
-          name: Verificar conexión SSH (con depuración)
-          command: |
-            ssh -v -o StrictHostKeyChecking=no $SSH_USER@$SERVER_HOST "echo 'Conexión SSH exitosa'"
-
-      - run:
-          name: Desplegar aplicación
-          command: |
-            ssh $SSH_USER@$SERVER_HOST "cd /ruta/del/proyecto && git pull origin main && npm install && pm2 restart app"
-
-      - run:
-          name: Notificar despliegue exitoso
-          command: |
-            if [ -n "$SLACK_WEBHOOK_URL" ]; then
-              curl -X POST -H 'Content-type: application/json' --data '{"text":"Despliegue exitoso en producción."}' "$SLACK_WEBHOOK_URL"
-            fi
-
 workflows:
   version: 2
   build_test_deploy:
@@ -88,9 +45,4 @@ workflows:
       - delivery:
           requires:
             - test
-      - deploy:
-          requires:
-            - delivery
-          filters:
-            branches:
-              only: main
+
