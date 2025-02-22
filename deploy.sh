@@ -1,13 +1,12 @@
 #!/bin/bash
-echo "Iniciando despliegue a producción..."
+set -e  # Detiene la ejecución si hay un error
 
-# Ejemplo de comandos para desplegar a un servidor remoto via SSH
-ssh -o StrictHostKeyChecking=no user@your-server.com << 'EOF'
-  cd /path/to/your/app
-  git pull origin main  # Obtener la última versión de la rama principal
-  npm install  # Instalar dependencias
-  npm run build  # Si tienes una construcción previa
-  pm2 restart app  # Reiniciar el servidor (si usas pm2)
-EOF
+echo "Iniciando despliegue..."
 
-echo "Despliegue completado."
+# Sincroniza archivos con el servidor
+rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ usuario@servidor:/ruta/destino
+
+# Ejecuta un script remoto para reiniciar la aplicación
+ssh -o StrictHostKeyChecking=no usuario@servidor "cd /ruta/destino && ./restart.sh"
+
+echo "Despliegue completado con éxito."

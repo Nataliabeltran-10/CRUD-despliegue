@@ -38,18 +38,32 @@ jobs:
               echo "SLACK_WEBHOOK_URL no está definido, omitiendo notificación."
             fi
 
-  deploy:
+    deploy:
     docker:
       - image: circleci/node:16
     working_directory: ~/repo
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "TU_FINGERPRINT_SSH"
       - run:
-          name: Dar permisos de ejecución al script de despliegue
-          command: chmod +x deploy.sh
+          name: Instalar rsync y SSH
+          command: sudo apt-get update && sudo apt-get install -y rsync ssh
       - run:
-          name: Ejecutar script de despliegue
+          name: Crear script de despliegue
+          command: |
+            echo '#!/bin/bash
+            set -e
+            echo "Iniciando despliegue..."
+            rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ usuario@servidor:/ruta/destino
+            ssh -o StrictHostKeyChecking=no usuario@servidor "cd /ruta/destino && ./restart.sh"
+            echo "Despliegue completado con éxito."' > deploy.sh
+            chmod +x deploy.sh
+      - run:
+          name: Ejecutar despliegue
           command: ./deploy.sh
+
 
 workflows:
   version: 2
