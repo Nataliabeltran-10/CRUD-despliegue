@@ -32,9 +32,13 @@ jobs:
       - run:
           name: Notificar en Slack
           command: |
+            if [ -z "$SLACK_WEBHOOK_URL" ]; then
+              echo "Error: SLACK_WEBHOOK_URL no está definido"
+              exit 1
+            fi
             curl -X POST -H 'Content-type: application/json' \
             --data '{"text":"✅ CI Passed! Application is ready for review."}' \
-            $SLACK_WEBHOOK_URL
+            "$SLACK_WEBHOOK_URL"
 
 workflows:
   version: 2
