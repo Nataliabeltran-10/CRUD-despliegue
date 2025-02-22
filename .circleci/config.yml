@@ -45,11 +45,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Desplegar aplicación
-          command: |
-            echo "Desplegando la aplicación..."
-            scp -r ./mi-aplicacion usuario@crud.com
-            ssh usuario@crud.com 'cd /ruta/destino && ./iniciar-aplicacion.sh'
+          name: Dar permisos de ejecución al script de despliegue
+          command: chmod +x deploy.sh
+      - run:
+          name: Ejecutar script de despliegue
+          command: ./deploy.sh
 
 workflows:
   version: 2
