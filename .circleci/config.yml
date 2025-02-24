@@ -43,28 +43,10 @@ jobs:
       - image: circleci/node:16
     working_directory: ~/repo
     steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "TU_FINGERPRINT_SSH"
-      - run:
-          name: Instalar rsync y SSH
-          command: sudo apt-get update && sudo apt-get install -y rsync ssh
       - run:
           name: Crear script de despliegue
           command: |
-            echo '#!/bin/bash
-            set -e
-            echo "Iniciando despliegue..."
-            rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ usuario@servidor:/ruta/destino
-            ssh -o StrictHostKeyChecking=no usuario@servidor "cd /ruta/destino && ./restart.sh"
-            echo "Despliegue completado con éxito."' > deploy.sh
-            chmod +x deploy.sh
-      - run:
-          name: Ejecutar despliegue
-          command: ./deploy.sh
-
-
+            echo 'Desplegando la aplicación...'
 workflows:
   version: 2
   build_test_deploy:
